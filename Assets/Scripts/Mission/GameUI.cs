@@ -329,7 +329,11 @@ public partial class GameUI : MonoBehaviour
         {
             shownPrompt = active;
             if (active != null)
+            {
                 promptLabel.text = active.PromptText + "  <size=22><color=#96A0B9>/ klik</color></size>";
+                float neededWidth = promptLabel.preferredWidth + 140f;
+                promptBox.Root.sizeDelta = new Vector2(Mathf.Max(640f, neededWidth), 96f);
+            }
         }
         float target = active != null ? 1f : 0f;
         promptGroup.alpha = Mathf.MoveTowards(promptGroup.alpha, target, Time.deltaTime * 8f);
