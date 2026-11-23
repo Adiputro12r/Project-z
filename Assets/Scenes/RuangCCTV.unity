@@ -1056,12 +1056,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 339ff3869e87b9d4dab37cf0e646c2c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneDoorTrigger
-  targetScene: Lorong
+  targetScene: 
   kind: 0
   spawnInTarget: {x: -6, y: 1}
   useSpawn: 1
+  isLocked: 1
   requiresBell: 0
-  lockedMessage: Pintu terkunci.
+  lockedMessage: Pintu terkunci otomatis. Tidak bisa kembali ke ruangan sebelumnya!
 --- !u!61 &1365892290
 BoxCollider2D:
   m_ObjectHideFlags: 0

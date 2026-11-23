@@ -14,6 +14,8 @@ public class SceneDoorTrigger : MonoBehaviour
     [Tooltip("Posisi player di scene tujuan.")]
     [SerializeField] private Vector2 spawnInTarget = Vector2.zero;
     [SerializeField] private bool useSpawn = true;
+    [Tooltip("Pintu dikunci permanen / tidak bisa kembali.")]
+    [SerializeField] private bool isLocked = false;
     [Tooltip("Pintu baru bisa dipakai setelah bel sekolah dibunyikan.")]
     [SerializeField] private bool requiresBell = false;
     [SerializeField] private string lockedMessage = "Pintu terkunci.";
@@ -36,6 +38,16 @@ public class SceneDoorTrigger : MonoBehaviour
         var ui = GameUI.Instance;
         var m = MissionManager.Instance;
         if (ui == null || m == null || ui.ModalOpen || ui.IsTransitioning) return;
+
+        if (isLocked)
+        {
+            if (Time.time >= nextMessageTime)
+            {
+                nextMessageTime = Time.time + 3f;
+                ui.ShowToast(lockedMessage, true, 2.6f);
+            }
+            return;
+        }
 
         if (requiresBell && !CorridorState.BellActive)
         {
