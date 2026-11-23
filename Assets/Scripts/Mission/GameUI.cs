@@ -44,6 +44,10 @@ public partial class GameUI : MonoBehaviour
     }
     private UIFactory.BorderedBox missionBox;
     private Text missionTitle;
+    private Image missionDivider;
+    private Text missionToggleLabel;
+    private Button missionToggleBtn;
+    private bool missionPanelExpanded = true;
     private readonly List<StepRow> rows = new List<StepRow>();
 
     // Prompt
@@ -131,8 +135,22 @@ public partial class GameUI : MonoBehaviour
         HandleAnnouncementInput();                 // dievaluasi dulu supaya 'E' penutup tidak langsung membuka lagi
         HandleDocModalInput();
         HandleVictoryModalInput();
+        HandleMissionToggleInput();
         ProximityInteractable.Tick(modal);
         UpdatePrompt(modal);
+    }
+
+    private void HandleMissionToggleInput()
+    {
+        if (ModalOpen || transitioning) return;
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.tabKey.wasPressedThisFrame || kb.mKey.wasPressedThisFrame)
+            {
+                ToggleMissionPanel();
+            }
+        }
     }
 
     // ------------------------------------------------------------------ canvas
@@ -176,11 +194,22 @@ public partial class GameUI : MonoBehaviour
         UIFactory.Place(missionBox.Root, new Vector2(0f, 1f), new Vector2(0f, 1f),
             new Vector2(28f, -28f), new Vector2(M(640f), M(200f)));
 
-        missionTitle = UIFactory.Label("Title", missionBox.Inner, "", MI(30), Gold);
-        UIFactory.PlaceTL(missionTitle.rectTransform, M(24), -M(14), M(590), M(46));
+        missionTitle = UIFactory.Label("Title", missionBox.Inner, "", MI(28), Gold);
+        UIFactory.PlaceTL(missionTitle.rectTransform, M(24), -M(14), M(450), M(46));
 
-        var divider = UIFactory.Box("Divider", missionBox.Inner, PanelBorder);
-        UIFactory.PlaceTL(divider.rectTransform, M(24), -M(64), M(586), 2);
+        missionDivider = UIFactory.Box("Divider", missionBox.Inner, PanelBorder);
+        UIFactory.PlaceTL(missionDivider.rectTransform, M(24), -M(64), M(586), 2);
+
+        // Tombol toggle buka / tutup di pojok kanan atas panel misi
+        var btnBox = UIFactory.Bordered("ToggleBtn", missionBox.Inner, new Color32(24, 34, 62, 255), PanelBorder, 1, 8, true);
+        UIFactory.Place(btnBox.Root, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-M(16f), -M(14f)), new Vector2(M(120f), M(38f)));
+        missionToggleBtn = btnBox.Root.gameObject.AddComponent<Button>();
+        missionToggleBtn.targetGraphic = btnBox.Fill;
+        missionToggleBtn.navigation = new Navigation { mode = Navigation.Mode.None };
+        missionToggleBtn.onClick.AddListener(ToggleMissionPanel);
+
+        missionToggleLabel = UIFactory.Label("ToggleLabel", btnBox.Inner, "▲ TAB", MI(18), TextDim, TextAnchor.MiddleCenter);
+        UIFactory.Stretch(missionToggleLabel.rectTransform);
     }
 
     private void RebuildMissionPanel()
@@ -207,8 +236,43 @@ public partial class GameUI : MonoBehaviour
             if (m.IsStepDone(i)) SetRowDone(row, false);
         }
 
-        float height = M(80f) + def.steps.Length * M(52f) + M(16f);
-        missionBox.Root.sizeDelta = new Vector2(M(640f), height);
+        UpdateMissionPanelExpandedState();
+    }
+
+    public void ToggleMissionPanel()
+    {
+        missionPanelExpanded = !missionPanelExpanded;
+        UpdateMissionPanelExpandedState();
+    }
+
+    private void UpdateMissionPanelExpandedState()
+    {
+        var m = MissionManager.Instance;
+        var def = m != null ? m.Current : null;
+        if (def == null || missionBox == null || missionBox.Root == null) return;
+
+        if (missionDivider != null)
+            missionDivider.gameObject.SetActive(missionPanelExpanded);
+
+        foreach (var row in rows)
+        {
+            if (row.Root != null)
+                row.Root.gameObject.SetActive(missionPanelExpanded);
+        }
+
+        if (missionPanelExpanded)
+        {
+            float height = M(80f) + def.steps.Length * M(52f) + M(16f);
+            missionBox.Root.sizeDelta = new Vector2(M(640f), height);
+            if (missionToggleLabel != null)
+                missionToggleLabel.text = "▲ TAB";
+        }
+        else
+        {
+            missionBox.Root.sizeDelta = new Vector2(M(640f), M(68f));
+            if (missionToggleLabel != null)
+                missionToggleLabel.text = "▼ TAB";
+        }
     }
 
     private StepRow CreateRow(int index, string text)
@@ -254,6 +318,11 @@ public partial class GameUI : MonoBehaviour
 
     private void OnStepCompleted(int index)
     {
+        if (!missionPanelExpanded)
+        {
+            missionPanelExpanded = true;
+            UpdateMissionPanelExpandedState();
+        }
         if (index >= 0 && index < rows.Count) SetRowDone(rows[index], true);
     }
 
