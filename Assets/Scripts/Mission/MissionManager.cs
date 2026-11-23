@@ -36,6 +36,15 @@ public static class Mission2Step
     public const int OpenDoor = 4;
 }
 
+/// <summary>Index langkah Misi 5 (urutannya harus sama dengan Mission5 di MissionManager).</summary>
+public static class Mission5Step
+{
+    public const int CheckCctv = 0;
+    public const int FindDocument = 1;
+    public const int ReadDocument = 2;
+    public const int LeaveRoom = 3;
+}
+
 /// <summary>
 /// Menyimpan state misi (petunjuk, laci, kunci) dan daftar langkah yang sudah selesai.
 /// Hidup lintas scene (dibuat otomatis oleh GameBootstrap).
@@ -59,6 +68,13 @@ public class MissionManager : MonoBehaviour
         "Cari kode panel bel di meja kepala sekolah",
         "Aktifkan panel bel sekolah di lorong",
         "Masuk ke ruang CCTV");
+
+    public static readonly MissionDefinition Mission5 = new MissionDefinition(
+        "MISI 5: Rahasia Project Z",
+        "Memeriksa rekaman CCTV mencurigakan",
+        "Mencari dokumen rahasia",
+        "Membaca dokumen PROJECT Z",
+        "Tinggalkan ruang operator lewat tangga darurat");
 
     /// <summary>Nama scene -> misi yang aktif di scene itu.</summary>
     private static readonly Dictionary<string, MissionDefinition> MissionByScene =
@@ -85,7 +101,7 @@ public class MissionManager : MonoBehaviour
             },
             { "Lorong", CorridorMission },
             { "RuangKepsek", CorridorMission },
-            { "RuangCCTV", CorridorMission },
+            { "RuangCCTV", Mission5 },
         };
     private const string FirstSceneName = "SampleScene";
     // ==========================
@@ -100,6 +116,10 @@ public class MissionManager : MonoBehaviour
     public bool HasDeskCode { get; private set; }
     public bool PanelUnlocked { get; private set; }
     public bool HasBellCode { get; private set; }
+    public bool CctvChecked { get; private set; }
+    public bool DocumentFound { get; private set; }
+    public bool DocumentRead { get; private set; }
+    public bool Mission5Complete { get; private set; }
 
     private bool corridorMissionActive;
 
@@ -134,7 +154,7 @@ public class MissionManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) => BeginMissionFor(scene.name);
 
     private static bool IsCorridorScene(string sceneName) =>
-        sceneName == LorongSceneName || sceneName == KepsekSceneName || sceneName == CctvSceneName;
+        sceneName == LorongSceneName || sceneName == KepsekSceneName;
 
     /// <summary>Dipanggil CorridorState.Reset() (player mati / game diulang): misi 3 mulai dari awal lagi.</summary>
     public void ResetCorridorMission()
@@ -178,6 +198,13 @@ public class MissionManager : MonoBehaviour
             HasDeskCode = false;
             PanelUnlocked = false;
             HasDoorKey = false;
+        }
+        else if (sceneName == CctvSceneName)
+        {
+            CctvChecked = false;
+            DocumentFound = false;
+            DocumentRead = false;
+            Mission5Complete = false;
         }
 
         MissionDefinition def;
@@ -271,6 +298,34 @@ public class MissionManager : MonoBehaviour
         HasDoorKey = false;
         CompleteStep(Mission2Step.OpenDoor);
         KeyStateChanged?.Invoke();
+    }
+
+    // ---- Aksi gameplay Misi 5 (CCTV & Rahasia Project Z) ----
+
+    public void CheckedCctv()
+    {
+        CctvChecked = true;
+        CompleteStep(Mission5Step.CheckCctv);
+    }
+
+    public void FoundDocument()
+    {
+        DocumentFound = true;
+        CompleteStep(Mission5Step.FindDocument);
+    }
+
+    public void ReadDocument()
+    {
+        DocumentFound = true;
+        DocumentRead = true;
+        CompleteStep(Mission5Step.FindDocument);
+        CompleteStep(Mission5Step.ReadDocument);
+    }
+
+    public void LeftRoom()
+    {
+        Mission5Complete = true;
+        CompleteStep(Mission5Step.LeaveRoom);
     }
 }
 

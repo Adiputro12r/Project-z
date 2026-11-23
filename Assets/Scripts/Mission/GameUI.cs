@@ -73,7 +73,7 @@ public partial class GameUI : MonoBehaviour
     private bool transitioning;
 
     public bool ModalOpen => noteOpen || announceOpen || (keypad != null && keypad.IsOpen) ||
-                             (wordPanel != null && wordPanel.IsOpen);
+                             (wordPanel != null && wordPanel.IsOpen) || docModalOpen || victoryModalOpen;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => Instance = null;
@@ -98,6 +98,8 @@ public partial class GameUI : MonoBehaviour
         BuildAnnouncement();
         BuildKeypad();
         BuildWordPanel();
+        BuildDocModal();
+        BuildVictoryModal();
         BuildFade();
 
         var m = MissionManager.Instance;
@@ -127,6 +129,8 @@ public partial class GameUI : MonoBehaviour
         bool modal = ModalOpen || transitioning;
         HandleNoteInput();
         HandleAnnouncementInput();                 // dievaluasi dulu supaya 'E' penutup tidak langsung membuka lagi
+        HandleDocModalInput();
+        HandleVictoryModalInput();
         ProximityInteractable.Tick(modal);
         UpdatePrompt(modal);
     }
