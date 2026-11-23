@@ -45,14 +45,6 @@ public static class Mission5Step
     public const int LeaveRoom = 3;
 }
 
-/// <summary>Index langkah Misi 6 (urutannya harus sama dengan Mission6 di MissionManager).</summary>
-public static class Mission6Step
-{
-    public const int AvoidZombies = 0;
-    public const int ApproachPatrolCar = 1;
-    public const int EscapeSchoolGate = 2;
-}
-
 /// <summary>
 /// Menyimpan state misi (petunjuk, laci, kunci) dan daftar langkah yang sudah selesai.
 /// Hidup lintas scene (dibuat otomatis oleh GameBootstrap).
@@ -68,7 +60,6 @@ public class MissionManager : MonoBehaviour
     public const string LorongSceneName = "Lorong";
     public const string KepsekSceneName = "RuangKepsek";
     public const string CctvSceneName = "RuangCCTV";
-    public const string HalamanSceneName = "HalamanSekolah";
 
     /// <summary>Misi 3 dipakai bersama oleh Lorong dan RuangKepsek (progres tidak ke-reset waktu pindah).</summary>
     private static readonly MissionDefinition CorridorMission = new MissionDefinition(
@@ -84,12 +75,6 @@ public class MissionManager : MonoBehaviour
         "Mencari dokumen rahasia",
         "Membaca dokumen PROJECT Z",
         "Tinggalkan ruang operator lewat tangga darurat");
-
-    public static readonly MissionDefinition Mission6 = new MissionDefinition(
-        "MISI 6: Pelarian Terakhir",
-        "Menghindari kerumunan zombie di halaman",
-        "Mendekati area mobil patroli",
-        "Keluar melewati gerbang utama sekolah");
 
     /// <summary>Nama scene -> misi yang aktif di scene itu.</summary>
     private static readonly Dictionary<string, MissionDefinition> MissionByScene =
@@ -117,7 +102,6 @@ public class MissionManager : MonoBehaviour
             { "Lorong", CorridorMission },
             { "RuangKepsek", CorridorMission },
             { "RuangCCTV", Mission5 },
-            { "HalamanSekolah", Mission6 },
         };
     private const string FirstSceneName = "SampleScene";
     // ==========================
@@ -342,28 +326,6 @@ public class MissionManager : MonoBehaviour
     {
         Mission5Complete = true;
         CompleteStep(Mission5Step.LeaveRoom);
-    }
-
-    // ---- Aksi gameplay Misi 6 (Halaman Sekolah / The Final Escape) ----
-
-    public bool PatrolCarApproached { get; private set; }
-    public bool EscapedGate { get; private set; }
-
-    public void EvadedZombies() => CompleteStep(Mission6Step.AvoidZombies);
-
-    public void ApproachedPatrolCar()
-    {
-        PatrolCarApproached = true;
-        CompleteStep(Mission6Step.AvoidZombies);
-        CompleteStep(Mission6Step.ApproachPatrolCar);
-    }
-
-    public void EscapedSchool()
-    {
-        EscapedGate = true;
-        CompleteStep(Mission6Step.AvoidZombies);
-        CompleteStep(Mission6Step.ApproachPatrolCar);
-        CompleteStep(Mission6Step.EscapeSchoolGate);
     }
 }
 
