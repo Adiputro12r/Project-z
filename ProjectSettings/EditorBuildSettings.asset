@@ -14,6 +14,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lorong.unity
     guid: b063d5013974b22478ae328cc9f7f82c
+  - enabled: 1
+    path: Assets/Scenes/RuangKepsek.unity
+    guid: 2497e12b2af99714babe7830c29bc386
+  - enabled: 1
+    path: Assets/Scenes/RuangCCTV.unity
+    guid: 5e96f0d15eaadae458a1cb28224c5f5f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
