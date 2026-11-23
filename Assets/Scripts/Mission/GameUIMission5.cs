@@ -57,6 +57,7 @@ public partial class GameUI
         // Body content (Area membaca dokumen yang luas dan terpisah jauh dari tombol)
         docModalBody = UIFactory.Label("Body", inner, "", 19, TextMain, TextAnchor.UpperLeft, FontStyle.Normal);
         docModalBody.lineSpacing = 1.22f;
+        docModalBody.verticalOverflow = VerticalWrapMode.Truncate;
         UIFactory.PlaceCenter(docModalBody.rectTransform, 0, 45, 1100, 410);
 
         // Divider Bawah
@@ -156,6 +157,7 @@ public partial class GameUI
         // Body
         victoryModalBody = UIFactory.Label("Body", inner, "", 19, TextMain, TextAnchor.UpperLeft, FontStyle.Normal);
         victoryModalBody.lineSpacing = 1.22f;
+        victoryModalBody.verticalOverflow = VerticalWrapMode.Truncate;
         UIFactory.PlaceCenter(victoryModalBody.rectTransform, 0, 45, 1100, 410);
 
         // Divider Bawah

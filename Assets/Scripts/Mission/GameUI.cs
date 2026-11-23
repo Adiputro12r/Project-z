@@ -378,12 +378,12 @@ public partial class GameUI : MonoBehaviour
         UIFactory.Stretch(capText.rectTransform);
 
         promptLabel = UIFactory.Label("Label", promptBox.Inner, "", 32, TextMain);
-        promptLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+        promptLabel.horizontalOverflow = HorizontalWrapMode.Wrap;
         var lrt = promptLabel.rectTransform;
         lrt.anchorMin = Vector2.zero;
         lrt.anchorMax = Vector2.one;
         lrt.offsetMin = new Vector2(100f, 0f);
-        lrt.offsetMax = new Vector2(-16f, 0f);
+        lrt.offsetMax = new Vector2(-28f, 0f);
 
         promptGroup = promptBox.Root.gameObject.AddComponent<CanvasGroup>();
         promptGroup.alpha = 0f;
@@ -400,7 +400,7 @@ public partial class GameUI : MonoBehaviour
             if (active != null)
             {
                 promptLabel.text = active.PromptText + "  <size=22><color=#96A0B9>/ klik</color></size>";
-                float neededWidth = promptLabel.preferredWidth + 140f;
+                float neededWidth = promptLabel.preferredWidth + 170f;
                 promptBox.Root.sizeDelta = new Vector2(Mathf.Max(640f, neededWidth), 96f);
             }
         }
