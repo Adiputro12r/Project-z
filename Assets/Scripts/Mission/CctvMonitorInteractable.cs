@@ -36,7 +36,7 @@ public class CctvMonitorInteractable : ProximityInteractable
                 "Beberapa menit kemudian, subjek mengalami kejang hebat, urat-uratnya menghitam, lalu mendobrak kaca pengaman isolasi dan menyerang peneliti secara agresif!\n\n" +
                 "Sebelum kamera terputus statis, terlihat sebuah map dokumen di meja lab bertuliskan:\n" +
                 "<color=#FFC43D><b>\"PROJECT Z — EXPERIMENT X\"</b></color>\n\n" +
-                "<i>Petunjuk: Salinan dokumen rahasia ini tersimpan di brankas arsip meja operator. Periksa lemari berkas di sebelah kiri meja!</i>",
+                "<i>Petunjuk: Salinan dokumen rahasia ini tersimpan di brankas arsip ruangan ini. Periksa brankas di sudut kanan ruangan!</i>",
                 new Color32(0, 210, 211, 255),
                 () =>
                 {
