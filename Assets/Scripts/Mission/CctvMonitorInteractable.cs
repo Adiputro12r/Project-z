@@ -26,6 +26,12 @@ public class CctvMonitorInteractable : ProximityInteractable
 
         if (cameraNumber == 4)
         {
+            if (!m.Mission4Complete)
+            {
+                ui.ShowToast("Layar monitor 04 belum menyala. Hubungi kepolisian lewat telepon di meja operator dulu.", true, 3.2f);
+                return;
+            }
+
             m.CheckedCctv();
 
             ui.ShowDocModal(

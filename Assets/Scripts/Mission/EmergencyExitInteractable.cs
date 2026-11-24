@@ -37,11 +37,18 @@ public class EmergencyExitInteractable : ProximityInteractable
         used = true;
         m.LeftRoom();
 
-        ui.ShowVictoryModal(
-            "BERHASIL KELUAR DARI KAWASAN SEKOLAH",
-            "MISI SELESAI — SELAMAT!",
+        ui.ShowDocModal(
+            "BERHASIL KELUAR DARI RUANG OPERATOR",
+            "MISI 5 SELESAI",
             "Ledakan mobil patroli kepolisian melumpuhkan kerumunan zombie di halaman sekolah.\n\n" +
-            "Kamu berhasil membuka pintu tangga darurat dan menerobos keluar melewati gerbang utama dalam keadaan selamat!\n\n" +
-            "Dengan membawa dokumen bukti rahasia <color=#2ED573><b>PROJECT Z (EXPERIMENT X)</b></color>, kebenaran di balik bencana wabah ini akhirnya terselamatkan dan siap diungkap ke publik!");
+            "Kamu berhasil membuka pintu tangga darurat dan menerobos keluar dari ruang operator!\n\n" +
+            "Dengan membawa dokumen bukti rahasia <color=#2ED573><b>PROJECT Z (EXPERIMENT X)</b></color>, kebenaran di balik bencana wabah ini siap diungkap ke publik!",
+            new Color32(46, 213, 115, 255),
+            () =>
+            {
+                m.StartMission6();
+                ui.ShowToast("Misi 6 dimulai!", false, 1.5f);
+                ui.TransitionToScene("Misi6", 0.5f);
+            });
     }
 }

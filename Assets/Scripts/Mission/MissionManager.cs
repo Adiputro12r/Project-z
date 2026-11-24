@@ -36,6 +36,19 @@ public static class Mission2Step
     public const int OpenDoor = 4;
 }
 
+/// <summary>Index langkah Misi 4 (urutannya harus sama dengan Mission4 di MissionManager).</summary>
+public static class Mission4Step
+{
+    public const int CheckOperatorDesk = 0;
+    public const int CallPolice = 1;
+}
+
+/// <summary>Index langkah Misi 6 (urutannya harus sama dengan Mission6 di MissionManager).</summary>
+public static class Mission6Step
+{
+    public const int MeetPolice = 0;
+}
+
 /// <summary>Index langkah Misi 5 (urutannya harus sama dengan Mission5 di MissionManager).</summary>
 public static class Mission5Step
 {
@@ -52,7 +65,8 @@ public static class Mission5Step
 public class MissionManager : MonoBehaviour
 {
     // ====== EDIT DI SINI ======
-    public const string DrawerCode = "194";
+    public const string DrawerCode = "1945";          // kode laci Misi 1 (papan tulis + laci meja guru)
+    public const string PoliceCode = "9110";           // kode akses cepat kepolisian (Misi 4)
     public const string NextSceneName = "Scene2";
     public const string EmergencyWordHint = "KELUAR";      // tulisan di meja (bahasa Indonesia)
     public const string EmergencyWordAnswer = "EXIT";      // jawaban yang diketik di panel pintu (bahasa Inggris)
@@ -69,12 +83,22 @@ public class MissionManager : MonoBehaviour
         "Aktifkan panel bel sekolah di lorong",
         "Masuk ke ruang CCTV");
 
+    public static readonly MissionDefinition Mission4 = new MissionDefinition(
+        "MISI 4: Hubungi Polisi",
+        "Memeriksa meja operator",
+        "Menyambungkan telepon ke kepolisian (kode 9110)");
+
     public static readonly MissionDefinition Mission5 = new MissionDefinition(
         "MISI 5: Rahasia Project Z",
         "Memeriksa rekaman CCTV mencurigakan",
         "Mencari dokumen rahasia",
         "Membaca dokumen PROJECT Z",
         "Tinggalkan ruang operator lewat tangga darurat");
+
+    // TODO: isi langkah Misi 6 sesuai alur cerita.
+    public static readonly MissionDefinition Mission6 = new MissionDefinition(
+        "MISI 6: Menuju Titik Evakuasi",
+        "Temui unit patroli polisi di luar gedung");
 
     /// <summary>Nama scene -> misi yang aktif di scene itu.</summary>
     private static readonly Dictionary<string, MissionDefinition> MissionByScene =
@@ -101,8 +125,9 @@ public class MissionManager : MonoBehaviour
             },
             { "Lorong", CorridorMission },
             { "RuangKepsek", CorridorMission },
-            { "RuangCCTV", Mission5 },
+            { "RuangCCTV", Mission4 },   // di ruang CCTV: Misi 4 -> Misi 5 -> Misi 6 (lihat SwitchMission)
         };
+    public const string IntroSceneName = "Intro";
     private const string FirstSceneName = "SampleScene";
     // ==========================
 
@@ -120,6 +145,10 @@ public class MissionManager : MonoBehaviour
     public bool DocumentFound { get; private set; }
     public bool DocumentRead { get; private set; }
     public bool Mission5Complete { get; private set; }
+    public bool OperatorDeskChecked { get; private set; }
+    public bool PoliceConnected { get; private set; }
+    public bool Mission4Complete { get; private set; }
+    public bool Mission6Started { get; private set; }
 
     private bool corridorMissionActive;
 
@@ -184,9 +213,27 @@ public class MissionManager : MonoBehaviour
         }
 
         corridorMissionActive = false;
-        if (sceneName == FirstSceneName || sceneName == Scene2Name) CorridorState.Reset();
+        if (sceneName == IntroSceneName || sceneName == FirstSceneName || sceneName == Scene2Name) CorridorState.Reset();
 
-        if (sceneName == FirstSceneName)
+        if (sceneName == IntroSceneName)
+        {
+            HasClue = false;
+            DrawerUnlocked = false;
+            HasDoorKey = false;
+            NoticeRead = false;
+            HasDeskCode = false;
+            PanelUnlocked = false;
+            HasBellCode = false;
+            OperatorDeskChecked = false;
+            PoliceConnected = false;
+            Mission4Complete = false;
+            CctvChecked = false;
+            DocumentFound = false;
+            DocumentRead = false;
+            Mission5Complete = false;
+            Mission6Started = false;
+        }
+        else if (sceneName == FirstSceneName)
         {
             HasClue = false;
             DrawerUnlocked = false;
@@ -201,6 +248,10 @@ public class MissionManager : MonoBehaviour
         }
         else if (sceneName == CctvSceneName)
         {
+            OperatorDeskChecked = false;
+            PoliceConnected = false;
+            Mission4Complete = false;
+            Mission6Started = false;
             CctvChecked = false;
             DocumentFound = false;
             DocumentRead = false;
@@ -300,22 +351,67 @@ public class MissionManager : MonoBehaviour
         KeyStateChanged?.Invoke();
     }
 
+    // ---- Aksi gameplay Misi 4 (meja operator & telepon kepolisian) ----
+
+    public void CheckedOperatorDesk()
+    {
+        if (Current != Mission4) return;
+        OperatorDeskChecked = true;
+        CompleteStep(Mission4Step.CheckOperatorDesk);
+    }
+
+    public void ConnectedPolice()
+    {
+        if (Current != Mission4 || !OperatorDeskChecked) return;
+        PoliceConnected = true;
+        Mission4Complete = true;
+        CompleteStep(Mission4Step.CallPolice);
+        StartCoroutine(SwitchMissionAfter(Mission5, 2.0f));   // beri waktu animasi coret, lalu lanjut Misi 5
+    }
+
+    /// <summary>Misi 6 dimulai setelah Misi 5 selesai (dipanggil saat modal Misi 5 ditutup).</summary>
+    public void StartMission6()
+    {
+        if (!Mission5Complete || Mission6Started) return;
+        Mission6Started = true;
+        SwitchMission(Mission6);
+    }
+
+    public void CompleteMission6() => CompleteStep(Mission6Step.MeetPolice);
+
+    private System.Collections.IEnumerator SwitchMissionAfter(MissionDefinition def, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SwitchMission(def);
+    }
+
+    /// <summary>Ganti misi aktif tanpa pindah scene (daftar langkah di HUD ikut diganti).</summary>
+    private void SwitchMission(MissionDefinition def)
+    {
+        Current = def;
+        done = new bool[def.steps.Length];
+        MissionChanged?.Invoke();
+    }
+
     // ---- Aksi gameplay Misi 5 (CCTV & Rahasia Project Z) ----
 
     public void CheckedCctv()
     {
+        if (Current != Mission5) return;
         CctvChecked = true;
         CompleteStep(Mission5Step.CheckCctv);
     }
 
     public void FoundDocument()
     {
+        if (Current != Mission5) return;
         DocumentFound = true;
         CompleteStep(Mission5Step.FindDocument);
     }
 
     public void ReadDocument()
     {
+        if (Current != Mission5) return;
         DocumentFound = true;
         DocumentRead = true;
         CompleteStep(Mission5Step.FindDocument);
@@ -324,6 +420,7 @@ public class MissionManager : MonoBehaviour
 
     public void LeftRoom()
     {
+        if (Current != Mission5) return;
         Mission5Complete = true;
         CompleteStep(Mission5Step.LeaveRoom);
     }

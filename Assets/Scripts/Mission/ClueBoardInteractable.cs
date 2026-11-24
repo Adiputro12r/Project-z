@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Papan tulis: dibaca -> muncul catatan "Kode Laci Meja Guru: 194" dan langkah 1 selesai.</summary>
+/// <summary>Papan tulis: dibaca -> muncul catatan "Kode Laci Meja Guru: 1945" dan langkah 1 selesai.</summary>
 public class ClueBoardInteractable : ProximityInteractable
 {
     protected override string DefaultPrompt => "Periksa Papan Tulis";
