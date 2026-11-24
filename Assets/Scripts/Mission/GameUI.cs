@@ -505,11 +505,11 @@ public partial class GameUI : MonoBehaviour
         noteRoot.gameObject.SetActive(false);
     }
 
-    public void ShowBoardNote(string code)
+public void ShowBoardNote(string question)
     {
         noteTitle.text = "CATATAN DI PAPAN TULIS";
-        noteBody.text = "Di sudut papan tulis terdapat catatan kecil:";
-        noteCode.text = "Kode Laci Meja Guru: <color=#FFC43D>" + code + "</color>";
+        noteBody.text = "Di sudut papan tulis tertulis sebuah soal:";
+        noteCode.text = "<size=46>" + question + "</size>";
         noteRoot.gameObject.SetActive(true);
         noteOpen = true;
         PlayerFreeze.Set(true);

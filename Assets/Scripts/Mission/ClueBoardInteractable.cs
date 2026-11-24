@@ -1,17 +1,17 @@
 using UnityEngine;
 
-/// <summary>Papan tulis: dibaca -> muncul catatan "Kode Laci Meja Guru: 1945" dan langkah 1 selesai.</summary>
+/// <summary>Papan tulis: dibaca -> muncul soal tahun kemerdekaan (jawabannya = kode laci) dan langkah 1 selesai.</summary>
 public class ClueBoardInteractable : ProximityInteractable
 {
     protected override string DefaultPrompt => "Periksa Papan Tulis";
 
-    protected override void Interact()
+protected override void Interact()
     {
         var m = MissionManager.Instance;
         var ui = GameUI.Instance;
         if (m == null || ui == null) return;
 
         m.FoundClue();
-        ui.ShowBoardNote(MissionManager.DrawerCode);
+        ui.ShowBoardNote("Berapakah tahun <color=#FFC43D>Indonesia merdeka</color>?");
     }
 }

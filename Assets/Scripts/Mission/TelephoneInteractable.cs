@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Meja operator dengan telepon kabel darurat dan buku kontak kepolisian (Misi 4).
 /// Langkah 1: periksa meja operator (muncul catatan kode kepolisian).
-/// Langkah 2: sambungkan telepon dengan memasukkan kode (9110) lewat keypad -> lanjut ke Misi 5.
+/// Langkah 2: sambungkan telepon dengan menjawab soal (0072) lewat keypad -> lanjut ke Misi 5.
 /// </summary>
 public class TelephoneInteractable : ProximityInteractable
 {
@@ -40,8 +40,8 @@ public class TelephoneInteractable : ProximityInteractable
                 "[STATUS: SAMBUNGAN DARURAT KEPOLISIAN]",
                 "Di atas meja operator terdapat telepon kabel merah yang masih berfungsi dan buku kontak darurat sekolah.\n\n" +
                 "<color=#FFC43D><b>Catatan Saluran Darurat:</b></color>\n" +
-                "Kode Akses Cepat Kepolisian: <color=#2ED573><b>" + MissionManager.PoliceCode + "</b></color>\n\n" +
-                "<i>Petunjuk: Periksa meja lagi untuk menyambungkan telepon ke kepolisian dengan memasukkan kode di atas.</i>",
+                "Nomor telepon kepolisian adalah jawaban soal ini:\n<color=#2ED573><b>Berapa jumlah jam dalam 3 hari? (3 x 24)</b></color>\n\n" +
+                "<i>Petunjuk: Tulis jawabannya 4 digit (awali dengan 0 jika kurang). Periksa meja lagi untuk menyambungkan telepon ke kepolisian.</i>",
                 new Color32(255, 196, 61, 255),
                 () => m.CheckedOperatorDesk());
             return;
@@ -49,7 +49,7 @@ public class TelephoneInteractable : ProximityInteractable
 
         ui.OpenKeypad(
             "TELEPON KEPOLISIAN",
-            "Telepon kabel menunggu kode akses cepat kepolisian (" + MissionManager.PoliceCode.Length + " digit).\n\nKodenya tercatat di buku kontak darurat di meja operator.",
+            "Telepon kabel menunggu nomor kepolisian (" + MissionManager.PoliceCode.Length + " digit).\n\nSoalnya ada di meja operator. Awali 0 bila kurang.",
             ValidateCode,
             OnSolved,
             MissionManager.PoliceCode.Length);

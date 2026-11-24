@@ -21,7 +21,7 @@ public class BellPanelInteractable : ProximityInteractable
 
         ui.OpenKeypad(
             "PANEL BEL SEKOLAH",
-            "Panel bel dikunci kode " + CodeDigits + " digit.\n\nJadwal bel biasanya disimpan kepala sekolah di mejanya.",
+            "Panel bel dikunci kode " + CodeDigits + " digit.\n\nSoal untuk kodenya disimpan kepala sekolah di mejanya.",
             ValidateCode,
             OnSolved,
             CodeDigits);

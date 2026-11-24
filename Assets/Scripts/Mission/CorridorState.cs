@@ -12,8 +12,8 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public static class CorridorState
 {
-    /// <summary>Kode panel bel sekolah (jam 07:30). Ditaruh di meja kepala sekolah.</summary>
-    public const string BellCode = "0730";
+    /// <summary>Kode panel bel sekolah = jawaban soal 512 + 512 yang ditaruh di meja kepala sekolah.</summary>
+    public const string BellCode = "1024";
 
     public static bool BellActive { get; private set; }
     public static Vector2 BellPosition { get; set; }

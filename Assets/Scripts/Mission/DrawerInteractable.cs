@@ -19,7 +19,7 @@ public class DrawerInteractable : ProximityInteractable
 
         ui.OpenKeypad(
             "LACI MEJA GURU",
-            "Laci ini dikunci gembok " + MissionManager.DrawerCode.Length + " digit.\n\nGuru biasanya menulis catatan penting di papan tulis kelas.",
+            "Laci ini dikunci gembok " + MissionManager.DrawerCode.Length + " digit.\n\nSoal untuk kodenya biasanya ditulis guru di papan tulis kelas.",
             ValidateCode,
             OnSolved,
             MissionManager.DrawerCode.Length);

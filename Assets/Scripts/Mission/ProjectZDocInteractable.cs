@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +10,9 @@ public class ProjectZDocInteractable : ProximityInteractable
 {
     protected override string DefaultPrompt => "Periksa Berkas Dokumen";
 
+    // Brankas harus dibuka dulu dengan kode sebelum dokumennya bisa dibaca.
+    private bool unlocked;
+
     protected override void Interact()
     {
         var m = MissionManager.Instance;
@@ -18,6 +22,21 @@ public class ProjectZDocInteractable : ProximityInteractable
         if (!m.CctvChecked)
         {
             ui.ShowToast("Periksa rekaman CCTV terlebih dahulu untuk petunjuk dokumen!", true, 3.0f);
+            return;
+        }
+
+        if (!unlocked)
+        {
+            ui.OpenKeypad(
+                "KODE DARURAT",
+                "Berapa angka terakhir alamat IP 192.168.1.10?\n\nKode 4 digit, awali dengan 0 bila kurang.",
+                entered => entered == MissionManager.SafeCode,
+                () =>
+                {
+                    unlocked = true;
+                    StartCoroutine(ReopenAfterUnlock());
+                },
+                MissionManager.SafeCode.Length);
             return;
         }
 
@@ -38,5 +57,12 @@ public class ProjectZDocInteractable : ProximityInteractable
             {
                 ui.ShowToast("Rahasia Project Z terungkap! Segera lari lewat Tangga Darurat!", false, 3.5f);
             });
+    }
+
+
+    private IEnumerator ReopenAfterUnlock()
+    {
+        yield return new WaitForSeconds(0.45f);   // tunggu keypad tertutup dulu
+        Interact();
     }
 }

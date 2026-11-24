@@ -65,8 +65,9 @@ public static class Mission5Step
 public class MissionManager : MonoBehaviour
 {
     // ====== EDIT DI SINI ======
-    public const string DrawerCode = "1945";          // kode laci Misi 1 (papan tulis + laci meja guru)
-    public const string PoliceCode = "9110";           // kode akses cepat kepolisian (Misi 4)
+    public const string DrawerCode = "1945";          // jawaban soal Misi 1: tahun Indonesia merdeka (soal di papan tulis, kode untuk laci meja guru)
+    public const string PoliceCode = "0072";           // jawaban soal Misi 4: jumlah jam dalam 3 hari (3 x 24 = 72, ditulis 4 digit)
+    public const string SafeCode = "0010";             // jawaban soal brankas Misi 5: angka terakhir IP 192.168.1.10 (10, ditulis 4 digit)
     public const string NextSceneName = "Scene2";
     public const string EmergencyWordHint = "KELUAR";      // tulisan di meja (bahasa Indonesia)
     public const string EmergencyWordAnswer = "EXIT";      // jawaban yang diketik di panel pintu (bahasa Inggris)
@@ -86,7 +87,7 @@ public class MissionManager : MonoBehaviour
     public static readonly MissionDefinition Mission4 = new MissionDefinition(
         "MISI 4: Hubungi Polisi",
         "Memeriksa meja operator",
-        "Menyambungkan telepon ke kepolisian (kode 9110)");
+        "Menyambungkan telepon ke kepolisian");
 
     public static readonly MissionDefinition Mission5 = new MissionDefinition(
         "MISI 5: Rahasia Project Z",
